@@ -1,0 +1,21 @@
+$kind: http-request
+description: Deleted course returns 404 Not Found.
+url: "{{baseUrl}}/api/courses/{{courseId}}"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{learnerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 404", function () {
+          pm.response.to.have.status(404);
+      });
+
+      pm.test("Data is null for deleted course", function () {
+          var json = pm.response.json();
+          pm.expect(json.data).to.be.null;
+      });
+    language: text/javascript
+order: 4000

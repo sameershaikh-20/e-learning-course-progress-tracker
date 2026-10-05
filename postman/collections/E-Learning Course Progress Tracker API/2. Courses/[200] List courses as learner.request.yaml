@@ -1,0 +1,28 @@
+$kind: http-request
+description: Gets catalog courses with projected lightweight lessons.
+url: "{{baseUrl}}/api/courses"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{learnerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      var json = pm.response.json();
+      pm.test("Catalog lessons omit content and enrolledLearners is absent", function () {
+          pm.expect(json.data).to.be.an("array");
+          var targetCourse = json.data.find(function (c) { return c._id === pm.environment.get("courseId"); });
+          pm.expect(targetCourse).to.be.an("object");
+          pm.expect(targetCourse).to.have.property("isEnrolled", false);
+          pm.expect(targetCourse).to.not.have.property("enrolledLearners");
+          if (targetCourse.lessons && targetCourse.lessons.length > 0) {
+              pm.expect(targetCourse.lessons[0]).to.not.have.property("content");
+          }
+      });
+    language: text/javascript
+order: 2000

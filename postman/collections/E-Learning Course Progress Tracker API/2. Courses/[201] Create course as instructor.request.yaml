@@ -1,0 +1,37 @@
+$kind: http-request
+description: Instructor creates a course; response is sanitized.
+url: "{{baseUrl}}/api/courses"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Mastering Node.js",
+      "description": "Complete backend guide"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      var json = pm.response.json();
+      pm.test("Course created with correct sanitized contract", function () {
+          pm.expect(json.data).to.have.property("_id").that.is.a("string").and.not.empty;
+          pm.expect(json.data).to.have.property("title", "Mastering Node.js");
+          pm.expect(json.data).to.have.property("isEnrolled", false);
+          pm.expect(json.data).to.not.have.property("enrolledLearners");
+          pm.expect(json.data.instructor).to.have.property("_id");
+          pm.expect(json.data.instructor).to.have.property("name");
+          pm.expect(json.data.instructor).to.not.have.property("email");
+          pm.environment.set("courseId", json.data._id);
+      });
+    language: text/javascript
+order: 1000

@@ -1,0 +1,3 @@
+$kind: collection
+description: Auto-incrementing lesson order algorithm verification (highest + 1) and isolated course cleanup.
+order: 8000

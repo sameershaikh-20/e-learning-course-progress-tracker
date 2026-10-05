@@ -1,0 +1,22 @@
+$kind: http-request
+description: Retrieves all lessons for a course ordered ascending.
+url: "{{baseUrl}}/api/courses/{{courseId}}/lessons"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{learnerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      var json = pm.response.json();
+      pm.test("Lessons are sorted by order", function () {
+          pm.expect(json.data).to.be.an("array").with.lengthOf(2);
+          pm.expect(json.data[0].order).to.be.at.most(json.data[1].order);
+      });
+    language: text/javascript
+order: 3000

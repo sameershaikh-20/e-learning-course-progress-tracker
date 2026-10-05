@@ -1,0 +1,16 @@
+$kind: http-request
+description: Cleans up extra course.
+url: "{{baseUrl}}/api/courses/{{extraCourseId}}"
+method: DELETE
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+    language: text/javascript
+order: 7000

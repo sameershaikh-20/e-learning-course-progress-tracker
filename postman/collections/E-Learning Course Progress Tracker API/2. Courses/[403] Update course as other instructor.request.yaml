@@ -1,0 +1,30 @@
+$kind: http-request
+description: Verifies course ownership authorization (403 for non-owner instructor).
+url: "{{baseUrl}}/api/courses/{{courseId}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Hacked Course Title"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructor2Token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 403", function () {
+          pm.response.to.have.status(403);
+      });
+
+      pm.test("Data is null on forbidden operation", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("message").that.is.a("string");
+          pm.expect(json.data).to.be.null;
+      });
+    language: text/javascript
+order: 5000

@@ -1,0 +1,21 @@
+$kind: http-request
+description: Enrollment in 0-lesson course succeeds.
+url: "{{baseUrl}}/api/courses/{{emptyCourseId}}/enroll"
+method: POST
+auth:
+  type: bearer
+  credentials:
+    token: "{{learnerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      var json = pm.response.json();
+      pm.test("Enrollment succeeds with totalLessons: 0", function () {
+          pm.expect(json.data).to.have.property("totalLessons", 0);
+      });
+    language: text/javascript
+order: 2000

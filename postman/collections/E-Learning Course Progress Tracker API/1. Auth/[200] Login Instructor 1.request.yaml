@@ -1,0 +1,28 @@
+$kind: http-request
+description: Logs in the primary instructor and stores instructorToken.
+url: "{{baseUrl}}/api/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "{{instructorEmail}}",
+      "password": "{{password}}"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      var json = pm.response.json();
+      pm.test("Login successful and returns valid token", function () {
+          pm.expect(json.data).to.have.property("token").that.is.a("string").and.not.empty;
+          pm.expect(json.data.user).to.have.property("role", "instructor");
+          pm.environment.set("instructorToken", json.data.token);
+      });
+    language: text/javascript
+order: 5000

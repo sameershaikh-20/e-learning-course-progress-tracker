@@ -1,0 +1,24 @@
+$kind: http-request
+description: Verifies dynamic progress recalculation after lesson deletion.
+url: "{{baseUrl}}/api/courses/{{courseId}}/progress"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{learnerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      var json = pm.response.json();
+      pm.test("Progress recalculated dynamically for remaining lesson", function () {
+          pm.expect(json.data).to.have.property("totalLessons", 1);
+          pm.expect(json.data).to.have.property("completedLessons", 1);
+          pm.expect(json.data).to.have.property("percentage", 100);
+          pm.expect(json.data).to.have.property("isCourseCompleted", true);
+      });
+    language: text/javascript
+order: 2000

@@ -1,0 +1,3 @@
+$kind: collection
+description: Lesson management, automatic order calculation, and course-relationship validations.
+order: 4000

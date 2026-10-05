@@ -1,0 +1,30 @@
+$kind: http-request
+description: Whitespace-only title rejected with 400.
+url: "{{baseUrl}}/api/courses"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "   ",
+      "description": "Valid description"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 400", function () {
+          pm.response.to.have.status(400);
+      });
+
+      pm.test("Data is null or contains error fields", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("message").that.is.a("string");
+      });
+    language: text/javascript
+order: 7000

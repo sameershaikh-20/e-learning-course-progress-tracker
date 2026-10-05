@@ -1,0 +1,30 @@
+$kind: http-request
+description: Verifies that new lesson receives order 4 after deleting order 2.
+url: "{{baseUrl}}/api/courses/{{extraCourseId}}/lessons"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Lesson D",
+      "content": "Content D"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      var json = pm.response.json();
+      pm.test("Lesson D assigned order 4 (highest 3 + 1)", function () {
+          pm.expect(json.data).to.have.property("order", 4);
+      });
+    language: text/javascript
+order: 6000

@@ -1,0 +1,31 @@
+$kind: http-request
+description: Creates a course without lessons.
+url: "{{baseUrl}}/api/courses"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Empty Course for Edge Cases",
+      "description": "Course with no initial lessons"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      var json = pm.response.json();
+      pm.test("Empty course created successfully", function () {
+          pm.expect(json.data).to.have.property("_id").that.is.a("string").and.not.empty;
+          pm.environment.set("emptyCourseId", json.data._id);
+      });
+    language: text/javascript
+order: 1000

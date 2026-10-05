@@ -1,0 +1,31 @@
+$kind: http-request
+description: Learners cannot create lessons (403).
+url: "{{baseUrl}}/api/courses/{{courseId}}/lessons"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Unauthorized Lesson",
+      "content": "Forbidden content"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{learnerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 403", function () {
+          pm.response.to.have.status(403);
+      });
+
+      pm.test("Data is null on forbidden role", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("message").that.is.a("string");
+          pm.expect(json.data).to.be.null;
+      });
+    language: text/javascript
+order: 5000

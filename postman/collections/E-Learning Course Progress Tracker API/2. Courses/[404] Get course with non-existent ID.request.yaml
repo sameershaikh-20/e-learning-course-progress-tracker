@@ -1,0 +1,22 @@
+$kind: http-request
+description: Non-existent course returns 404 Not Found.
+url: "{{baseUrl}}/api/courses/600000000000000000000000"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{learnerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 404", function () {
+          pm.response.to.have.status(404);
+      });
+
+      pm.test("Data is null on non-existent resource", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("message").that.is.a("string");
+          pm.expect(json.data).to.be.null;
+      });
+    language: text/javascript
+order: 11000

@@ -1,0 +1,3 @@
+$kind: collection
+description: Cascade deletions and resource cleanup for the primary test flow.
+order: 7000

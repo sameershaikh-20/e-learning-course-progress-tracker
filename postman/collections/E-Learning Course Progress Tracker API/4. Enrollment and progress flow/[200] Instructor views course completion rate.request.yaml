@@ -1,0 +1,23 @@
+$kind: http-request
+description: Course owner receives aggregate completion metrics.
+url: "{{baseUrl}}/api/courses/{{courseId}}/completion-rate"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      var json = pm.response.json();
+      pm.test("Completion rate shows 100% with 1 enrolled and 1 completed", function () {
+          pm.expect(json.data).to.have.property("totalEnrolled", 1);
+          pm.expect(json.data).to.have.property("totalCompleted", 1);
+          pm.expect(json.data).to.have.property("completionRate", 100);
+      });
+    language: text/javascript
+order: 12000

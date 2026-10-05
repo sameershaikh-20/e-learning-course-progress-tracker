@@ -1,0 +1,3 @@
+$kind: collection
+description: Course CRUD operations, response shaping, enrollment state, and role authorization.
+order: 3000

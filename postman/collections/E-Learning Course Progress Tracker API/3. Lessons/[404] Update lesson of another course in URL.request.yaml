@@ -1,0 +1,30 @@
+$kind: http-request
+description: Verifies that lesson must belong to the :courseId specified in URL.
+url: "{{baseUrl}}/api/courses/600000000000000000000000/lessons/{{lesson1Id}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Mismatch URL Title"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 404", function () {
+          pm.response.to.have.status(404);
+      });
+
+      pm.test("Data is null on course-lesson mismatch", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("message").that.is.a("string");
+          pm.expect(json.data).to.be.null;
+      });
+    language: text/javascript
+order: 6000

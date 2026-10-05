@@ -1,0 +1,29 @@
+$kind: http-request
+description: Verifies input type check rejecting non-string names (400).
+url: "{{baseUrl}}/api/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": 99999,
+      "email": "numname@example.test",
+      "password": "Password123",
+      "role": "learner"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 400", function () {
+          pm.response.to.have.status(400);
+      });
+
+      pm.test("Data is null on type validation error", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("message").that.is.a("string");
+          pm.expect(json.data).to.be.null;
+      });
+    language: text/javascript
+order: 12000

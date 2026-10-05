@@ -1,0 +1,29 @@
+$kind: http-request
+description: Course owner updates lesson title.
+url: "{{baseUrl}}/api/courses/{{courseId}}/lessons/{{lesson1Id}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "1. Event Loop & Async I/O"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      var json = pm.response.json();
+      pm.test("Lesson 1 title updated successfully", function () {
+          pm.expect(json.data).to.have.property("title", "1. Event Loop & Async I/O");
+      });
+    language: text/javascript
+order: 4000

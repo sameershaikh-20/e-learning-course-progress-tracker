@@ -1,0 +1,18 @@
+$kind: http-request
+description: Unauthenticated requests return 401 Unauthorized.
+url: "{{baseUrl}}/api/courses/{{courseId}}/progress"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 401", function () {
+          pm.response.to.have.status(401);
+      });
+
+      pm.test("Data is null on unauthenticated request", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("message").that.is.a("string");
+          pm.expect(json.data).to.be.null;
+      });
+    language: text/javascript
+order: 15000

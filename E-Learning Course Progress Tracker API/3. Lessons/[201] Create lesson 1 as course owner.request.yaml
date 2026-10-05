@@ -1,0 +1,32 @@
+$kind: http-request
+description: Creates Lesson 1 with automatic order calculation.
+url: "{{baseUrl}}/api/courses/{{courseId}}/lessons"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "1. Event Loop Fundamentals",
+      "content": "Deep dive into libuv and event loop phases."
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      var json = pm.response.json();
+      pm.test("Lesson 1 created with auto order 1", function () {
+          pm.expect(json.data).to.have.property("_id").that.is.a("string").and.not.empty;
+          pm.expect(json.data).to.have.property("order", 1);
+          pm.environment.set("lesson1Id", json.data._id);
+      });
+    language: text/javascript
+order: 1000

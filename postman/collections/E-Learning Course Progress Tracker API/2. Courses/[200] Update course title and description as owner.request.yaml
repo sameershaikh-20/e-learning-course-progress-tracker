@@ -1,0 +1,30 @@
+$kind: http-request
+description: Owner updates course details.
+url: "{{baseUrl}}/api/courses/{{courseId}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Mastering Node.js (Updated)",
+      "description": "Comprehensive backend guide"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      var json = pm.response.json();
+      pm.test("Course title updated successfully", function () {
+          pm.expect(json.data).to.have.property("title", "Mastering Node.js (Updated)");
+      });
+    language: text/javascript
+order: 4000

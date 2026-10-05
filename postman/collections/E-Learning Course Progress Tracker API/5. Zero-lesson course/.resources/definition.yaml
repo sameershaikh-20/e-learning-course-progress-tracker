@@ -1,0 +1,3 @@
+$kind: collection
+description: "Handling edge cases: zero-lesson courses, enrollments, 0% completion states, and deletion."
+order: 6000

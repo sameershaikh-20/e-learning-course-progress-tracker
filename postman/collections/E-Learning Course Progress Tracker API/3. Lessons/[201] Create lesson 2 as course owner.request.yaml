@@ -1,0 +1,32 @@
+$kind: http-request
+description: Creates Lesson 2 with automatic order calculation.
+url: "{{baseUrl}}/api/courses/{{courseId}}/lessons"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "2. Express Middleware",
+      "content": "Building scalable Express middleware."
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      var json = pm.response.json();
+      pm.test("Lesson 2 created with auto order 2", function () {
+          pm.expect(json.data).to.have.property("_id").that.is.a("string").and.not.empty;
+          pm.expect(json.data).to.have.property("order", 2);
+          pm.environment.set("lesson2Id", json.data._id);
+      });
+    language: text/javascript
+order: 2000

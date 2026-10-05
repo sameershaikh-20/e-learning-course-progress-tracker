@@ -1,0 +1,31 @@
+$kind: http-request
+description: Lesson B created with auto order 2.
+url: "{{baseUrl}}/api/courses/{{extraCourseId}}/lessons"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Lesson B",
+      "content": "Content B"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      var json = pm.response.json();
+      pm.test("Lesson B assigned order 2", function () {
+          pm.expect(json.data).to.have.property("order", 2);
+          pm.environment.set("extraLessonBId", json.data._id);
+      });
+    language: text/javascript
+order: 3000

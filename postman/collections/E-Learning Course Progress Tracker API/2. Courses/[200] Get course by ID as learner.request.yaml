@@ -1,0 +1,24 @@
+$kind: http-request
+description: Gets single course by ID for non-enrolled learner.
+url: "{{baseUrl}}/api/courses/{{courseId}}"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{learnerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      var json = pm.response.json();
+      pm.test("Course details include full structure without enrolledLearners", function () {
+          pm.expect(json.data).to.have.property("_id", pm.environment.get("courseId"));
+          pm.expect(json.data).to.have.property("isEnrolled", false);
+          pm.expect(json.data).to.not.have.property("enrolledLearners");
+          pm.expect(json.data.instructor).to.not.have.property("email");
+      });
+    language: text/javascript
+order: 3000

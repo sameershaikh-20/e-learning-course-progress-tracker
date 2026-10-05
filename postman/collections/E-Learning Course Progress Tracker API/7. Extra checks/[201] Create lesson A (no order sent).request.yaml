@@ -1,0 +1,30 @@
+$kind: http-request
+description: Lesson A created with auto order 1.
+url: "{{baseUrl}}/api/courses/{{extraCourseId}}/lessons"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Lesson A",
+      "content": "Content A"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{instructorToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      var json = pm.response.json();
+      pm.test("Lesson A assigned order 1", function () {
+          pm.expect(json.data).to.have.property("order", 1);
+      });
+    language: text/javascript
+order: 2000

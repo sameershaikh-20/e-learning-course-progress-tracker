@@ -1,0 +1,2 @@
+$kind: collection
+description: Complete Postman API test collection for Case Study 199 (E-Learning Course Progress Tracker). Free and open-source compatible. Covers authentication, courses, lessons, enrollment, dynamic progress tracking, instructor completion analytics, edge cases, and cascade deletions.

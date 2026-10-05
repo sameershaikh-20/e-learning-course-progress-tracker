@@ -1,0 +1,326 @@
+newman
+
+E-Learning Course Progress Tracker API
+
+Folder 0. System
+Sub-folder [200] Health check
+  GET http://localhost:5001/api/health [200 OK, 378B, 13ms]
+  Pass  Status code is 200
+  Pass  Response follows { message, data } contract
+
+Folder 1. Auth
+Sub-folder [201/400] Register Instructor 1
+  POST http://localhost:5001/api/auth/register [400 Bad Request, 329B, 14ms]
+  Pass  Status code is 201 (Created) or 400 (Already registered)
+  Pass  Response follows { message, data } contract
+
+Sub-folder [201/400] Register Instructor 2
+  POST http://localhost:5001/api/auth/register [400 Bad Request, 329B, 14ms]
+  Pass  Status code is 201 (Created) or 400 (Already registered)
+  Pass  Response follows { message, data } contract
+
+Sub-folder [201/400] Register Learner 1
+  POST http://localhost:5001/api/auth/register [400 Bad Request, 329B, 10ms]
+  Pass  Status code is 201 (Created) or 400 (Already registered)
+  Pass  Response follows { message, data } contract
+
+Sub-folder [201/400] Register Learner 2
+  POST http://localhost:5001/api/auth/register [400 Bad Request, 329B, 10ms]
+  Pass  Status code is 201 (Created) or 400 (Already registered)
+  Pass  Response follows { message, data } contract
+
+Sub-folder [200] Login Instructor 1
+  POST http://localhost:5001/api/auth/login [200 OK, 640B, 141ms]
+  Pass  Status code is 200
+  Pass  Login successful and returns valid token
+
+Sub-folder [200] Login Instructor 2
+  POST http://localhost:5001/api/auth/login [200 OK, 643B, 82ms]
+  Pass  Status code is 200
+  Pass  Login successful and returns valid token
+
+Sub-folder [200] Login Learner 1
+  POST http://localhost:5001/api/auth/login [200 OK, 627B, 96ms]
+  Pass  Status code is 200
+  Pass  Login successful and returns valid token
+
+Sub-folder [200] Login Learner 2
+  POST http://localhost:5001/api/auth/login [200 OK, 630B, 90ms]
+  Pass  Status code is 200
+  Pass  Login successful and returns valid token
+
+Sub-folder [401] Login with wrong password
+  POST http://localhost:5001/api/auth/login [401 Unauthorized, 328B, 57ms]
+  Pass  Status code is 401
+  Pass  Data is null on authentication failure
+
+Sub-folder [400] Register with invalid email
+  POST http://localhost:5001/api/auth/register [400 Bad Request, 338B, 0µs]
+  Pass  Status code is 400
+  Pass  Data is null on validation error
+
+Sub-folder [400] Register with short password
+  POST http://localhost:5001/api/auth/register [400 Bad Request, 345B, 1ms]
+  Pass  Status code is 400
+  Pass  Data is null on validation error
+
+Sub-folder [400] Register with name sent as a number
+  POST http://localhost:5001/api/auth/register [400 Bad Request, 333B, 0µs]
+  Pass  Status code is 400
+  Pass  Data is null on type validation error
+
+Folder 2. Courses
+Sub-folder [201] Create course as instructor
+  POST http://localhost:5001/api/courses [201 Created, 610B, 64ms]
+  Pass  Status code is 201
+  Pass  Course created with correct sanitized contract
+
+Sub-folder [200] List courses as learner
+  GET http://localhost:5001/api/courses [200 OK, 610B, 25ms]
+  Pass  Status code is 200
+  Pass  Catalog lessons omit content and enrolledLearners is absent
+
+Sub-folder [200] Get course by ID as learner
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214 [200 OK, 607B, 129ms]
+  Pass  Status code is 200
+  Pass  Course details include full structure without enrolledLearners
+
+Sub-folder [200] Update course title and description as owner
+  PUT http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214 [200 OK, 620B, 37ms]
+  Pass  Status code is 200
+  Pass  Course title updated successfully
+
+Sub-folder [403] Update course as other instructor
+  PUT http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214 [403 Forbidden, 341B, 16ms]
+  Pass  Status code is 403
+  Pass  Data is null on forbidden operation
+
+Sub-folder [403] Create course as learner
+  POST http://localhost:5001/api/courses [403 Forbidden, 340B, 7ms]
+  Pass  Status code is 403
+  Pass  Data is null on insufficient permissions
+
+Sub-folder [400] Create course with whitespace-only title
+  POST http://localhost:5001/api/courses [400 Bad Request, 341B, 9ms]
+  Pass  Status code is 400
+  Pass  Data is null or contains error fields
+
+Sub-folder [400] Create course with title sent as a number
+  POST http://localhost:5001/api/courses [400 Bad Request, 341B, 10ms]
+  Pass  Status code is 400
+  Pass  Data is null on invalid title type
+
+Sub-folder [400] Update course with description null
+  PUT http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214 [400 Bad Request, 330B, 83ms]
+  Pass  Status code is 400
+  Pass  Data is null on null description type
+
+Sub-folder [400] Get course with malformed ID
+  GET http://localhost:5001/api/courses/not-a-valid-id-123 [400 Bad Request, 319B, 15ms]
+  Pass  Status code is 400
+  Pass  Data is null on invalid ObjectId format
+
+Sub-folder [404] Get course with non-existent ID
+  GET http://localhost:5001/api/courses/600000000000000000000000 [404 Not Found, 316B, 23ms]
+  Pass  Status code is 404
+  Pass  Data is null on non-existent resource
+
+Folder 3. Lessons
+Sub-folder [201] Create lesson 1 as course owner
+  POST http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/lessons [201 Created, 582B, 76ms]
+  Pass  Status code is 201
+  Pass  Lesson 1 created with auto order 1
+
+Sub-folder [201] Create lesson 2 as course owner
+  POST http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/lessons [201 Created, 571B, 103ms]
+  Pass  Status code is 201
+  Pass  Lesson 2 created with auto order 2
+
+Sub-folder [200] List lessons for course
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/lessons [200 OK, 831B, 39ms]
+  Pass  Status code is 200
+  Pass  Lessons are sorted by order
+
+Sub-folder [200] Update lesson 1 as course owner
+  PUT http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/lessons/6abf0630f4542b73e9d1d22f [200 OK, 576B, 48ms]
+  Pass  Status code is 200
+  Pass  Lesson 1 title updated successfully
+
+Sub-folder [403] Create lesson as learner
+  POST http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/lessons [403 Forbidden, 340B, 19ms]
+  Pass  Status code is 403
+  Pass  Data is null on forbidden role
+
+Sub-folder [404] Update lesson of another course in URL
+  PUT http://localhost:5001/api/courses/600000000000000000000000/lessons/6abf0630f4542b73e9d1d22f [404 Not Found, 331B, 56ms]
+  Pass  Status code is 404
+  Pass  Data is null on course-lesson mismatch
+
+Folder 4. Enrollment and progress flow
+Sub-folder [201] Learner 1 enrolls in course
+  POST http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/enroll [201 Created, 371B, 42ms]
+  Pass  Status code is 201
+  Pass  Enrollment returns courseId and totalLessons
+
+Sub-folder [400] Learner 1 enrolls in course again (Duplicate Check)
+  POST http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/enroll [400 Bad Request, 333B, 29ms]
+  Pass  Status code is 400
+  Pass  Data is null on duplicate enrollment
+
+Sub-folder [200] Get course as Learner 1 (isEnrolled true)
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214 [200 OK, 1.13kB, 120ms]
+  Pass  Status code is 200
+  Pass  isEnrolled is true for enrolled learner
+
+Sub-folder [200] Get course as Instructor (isEnrolled false)
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214 [200 OK, 1.13kB, 187ms]
+  Pass  Status code is 200
+  Pass  isEnrolled is false for instructor
+
+Sub-folder [200] Get course as Learner 2 (isEnrolled false)
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214 [200 OK, 1.13kB, 42ms]
+  Pass  Status code is 200
+  Pass  isEnrolled is false for non-enrolled learner
+
+Sub-folder [200] Learner 1 initial progress (0%)
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/progress [200 OK, 719B, 73ms]
+  Pass  Status code is 200
+  Pass  Initial progress is 0% with no completed lessons
+
+Sub-folder [200] Learner 1 completes Lesson 1 (50%)
+  POST http://localhost:5001/api/lessons/6abf0630f4542b73e9d1d22f/complete [200 OK, 600B, 55ms]
+  Pass  Status code is 200
+  Pass  Lesson 1 marked complete, course is not yet finished
+
+Sub-folder [200] Learner 1 completes Lesson 1 again (Double-click safety)
+  POST http://localhost:5001/api/lessons/6abf0630f4542b73e9d1d22f/complete [200 OK, 600B, 135ms]
+  Pass  Status code is 200
+  Pass  Repeated complete returns 200 without error
+
+Sub-folder [200] Learner 1 completes Lesson 2 (100% Course Completed)
+  POST http://localhost:5001/api/lessons/6abf0630f4542b73e9d1d237/complete [200 OK, 599B, 97ms]
+  Pass  Status code is 200
+  Pass  Final lesson marked complete, course is completed
+
+Sub-folder [403] Learner 2 attempts to view progress (Not Enrolled)
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/progress [403 Forbidden, 351B, 29ms]
+  Pass  Status code is 403
+  Pass  Data is null for unauthorized non-enrolled progress view
+
+Sub-folder [403] Learner 2 attempts to complete lesson (Not Enrolled)
+  POST http://localhost:5001/api/lessons/6abf0630f4542b73e9d1d22f/complete [403 Forbidden, 351B, 38ms]
+  Pass  Status code is 403
+  Pass  Data is null for unauthorized lesson completion
+
+Sub-folder [200] Instructor views course completion rate
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/completion-rate [200 OK, 486B, 143ms]
+  Pass  Status code is 200
+  Pass  Completion rate shows 100% with 1 enrolled and 1 completed
+
+Sub-folder [403] Other instructor views completion rate
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/completion-rate [403 Forbidden, 341B, 33ms]
+  Pass  Status code is 403
+  Pass  Data is null on non-owner completion rate check
+
+Sub-folder [403] Learner views completion rate
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/completion-rate [403 Forbidden, 340B, 23ms]
+  Pass  Status code is 403
+  Pass  Data is null for learner role on analytics
+
+Sub-folder [401] Request with no token
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/progress [401 Unauthorized, 342B, 1ms]
+  Pass  Status code is 401
+  Pass  Data is null on unauthenticated request
+
+Folder 5. Zero-lesson course
+Sub-folder [201] Instructor creates empty course
+  POST http://localhost:5001/api/courses [201 Created, 628B, 125ms]
+  Pass  Status code is 201
+  Pass  Empty course created successfully
+
+Sub-folder [201] Learner enrolls in empty course
+  POST http://localhost:5001/api/courses/6abf0631f4542b73e9d1d282/enroll [201 Created, 371B, 27ms]
+  Pass  Status code is 201
+  Pass  Enrollment succeeds with totalLessons: 0
+
+Sub-folder [200] Learner views empty course progress
+  GET http://localhost:5001/api/courses/6abf0631f4542b73e9d1d282/progress [200 OK, 503B, 116ms]
+  Pass  Status code is 200
+  Pass  Progress is 0% and isCourseCompleted is false
+
+Sub-folder [200] Instructor deletes empty course
+  DELETE http://localhost:5001/api/courses/6abf0631f4542b73e9d1d282 [200 OK, 320B, 50ms]
+  Pass  Status code is 200
+
+Folder 6. Cleanup of the main flow
+Sub-folder [200] Instructor deletes lesson 1
+  DELETE http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/lessons/6abf0630f4542b73e9d1d22f [200 OK, 320B, 76ms]
+  Pass  Status code is 200
+
+Sub-folder [200] Learner progress reflects 1 remaining lesson
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214/progress [200 OK, 609B, 161ms]
+  Pass  Status code is 200
+  Pass  Progress recalculated dynamically for remaining lesson
+
+Sub-folder [200] Instructor deletes main course (Cascade Delete)
+  DELETE http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214 [200 OK, 320B, 49ms]
+  Pass  Status code is 200
+
+Sub-folder [404] Get deleted course by ID
+  GET http://localhost:5001/api/courses/6abf062ff4542b73e9d1d214 [404 Not Found, 316B, 114ms]
+  Pass  Status code is 404
+  Pass  Data is null for deleted course
+
+Folder 7. Extra checks
+Sub-folder [201] Instructor creates extra course
+  POST http://localhost:5001/api/courses [201 Created, 621B, 24ms]
+  Pass  Status code is 201
+  Pass  Extra course created
+
+Sub-folder [201] Create lesson A (no order sent)
+  POST http://localhost:5001/api/courses/6abf0632f4542b73e9d1d2a6/lessons [201 Created, 530B, 163ms]
+  Pass  Status code is 201
+  Pass  Lesson A assigned order 1
+
+Sub-folder [201] Create lesson B (no order sent)
+  POST http://localhost:5001/api/courses/6abf0632f4542b73e9d1d2a6/lessons [201 Created, 530B, 164ms]
+  Pass  Status code is 201
+  Pass  Lesson B assigned order 2
+
+Sub-folder [201] Create lesson C (no order sent)
+  POST http://localhost:5001/api/courses/6abf0632f4542b73e9d1d2a6/lessons [201 Created, 530B, 65ms]
+  Pass  Status code is 201
+  Pass  Lesson C assigned order 3
+
+Sub-folder [200] Delete middle lesson (Lesson B)
+  DELETE http://localhost:5001/api/courses/6abf0632f4542b73e9d1d2a6/lessons/6abf0632f4542b73e9d1d2b5 [200 OK, 320B, 149ms]
+  Pass  Status code is 200
+
+Sub-folder [201] Create lesson D without sending order
+  POST http://localhost:5001/api/courses/6abf0632f4542b73e9d1d2a6/lessons [201 Created, 530B, 202ms]
+  Pass  Status code is 201
+  Pass  Lesson D assigned order 4 (highest 3 + 1)
+
+Sub-folder [200] Delete extra course
+  DELETE http://localhost:5001/api/courses/6abf0632f4542b73e9d1d2a6 [200 OK, 320B, 51ms]
+  Pass  Status code is 200
+
+------------------------------------------------------------------
+|                         |          executed |           failed |
+--------------------------+-------------------+-------------------
+|              iterations |                 1 |                0 |
+--------------------------+-------------------+-------------------
+|                requests |                60 |                0 |
+--------------------------+-------------------+-------------------
+|            test-scripts |                60 |                0 |
+--------------------------+-------------------+-------------------
+|      prerequest-scripts |                 0 |                0 |
+--------------------------+-------------------+-------------------
+|              assertions |               115 |                0 |
+------------------------------------------------------------------
+| total run duration: 4.6s                                       |
+------------------------------------------------------------------
+| total data received: 12.84kB (approx)                          |
+------------------------------------------------------------------
+| average response time: 66ms [min: 1ms, max: 202ms, s.d.: 52ms] |
+------------------------------------------------------------------

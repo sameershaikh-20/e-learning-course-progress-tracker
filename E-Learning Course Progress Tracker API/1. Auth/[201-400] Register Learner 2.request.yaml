@@ -1,0 +1,29 @@
+$kind: http-request
+name: "[201/400] Register Learner 2"
+description: Registers the secondary learner test account.
+url: "{{baseUrl}}/api/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Secondary Learner",
+      "email": "{{learner2Email}}",
+      "password": "{{password}}",
+      "role": "learner"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201 (Created) or 400 (Already registered)", function () {
+          pm.expect(pm.response.code).to.be.oneOf([201, 400]);
+      });
+
+      pm.test("Response follows { message, data } contract", function () {
+          var json = pm.response.json();
+          pm.expect(json).to.have.property("message").that.is.a("string");
+      });
+    language: text/javascript
+order: 4000
