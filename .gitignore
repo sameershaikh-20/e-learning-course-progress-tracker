@@ -37,6 +37,7 @@ secrets/
 
 # Logs and crash reports
 *.log
+newman-results.txt
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
